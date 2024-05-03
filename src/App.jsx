@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { SessionState } from './utils';
+import {
+  simulatePractice,
+  simulateQualifying,
+  simulateRace,
+} from './funcs';
+import RaceWeekend from './RaceWeekend';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [session, setSession] = useState(SessionState.WeekendStart);
+  const [practiceData, setPracticeData] = useState({});
+  const [qualifyingData, setQualifyingData] = useState({});
+  const [raceData, setRaceData] = useState({});
+
+  function startPractice() {
+    setSession(SessionState.Simulating);
+    setPracticeData(simulatePractice());
+    setTimeout(() => setSession(SessionState.PostPractice), 2000);
+  }
+
+  function startQualifying() {
+    setSession(SessionState.Simulating);
+    setQualifyingData(simulateQualifying());
+    setTimeout(() => setSession(SessionState.PostQualifying), 2000);
+  }
+
+  function startRace() {
+    setSession(SessionState.Simulating);
+    setRaceData(simulateRace());
+    setTimeout(() => setSession(SessionState.PostRace), 2000);
+  }
+
+  function reset() {
+    setSession(SessionState.WeekendStart);
+    setPracticeData({});
+    setQualifyingData({});
+    setRaceData({});
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="min-h-screen bg-[#0F0F19] p-5 gap-6 flex flex-col items-start">
+      <RaceWeekend
+        session={session}
+        startPractice={startPractice}
+        startQualifying={startQualifying}
+        startRace={startRace}
+        practiceData={practiceData} 
+        qualifyingData={qualifyingData}
+        raceData={raceData}
+        onReset={reset}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;
