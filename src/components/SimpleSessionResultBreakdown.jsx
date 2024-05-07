@@ -27,7 +27,7 @@ export default function SimpleSessionResultBreakdown({ result, onBack }) {
                     </svg>
                 </button>
                 <p className="text-xl">
-                    Practice Breakdown for {result.driverName} - POS {result.pos}
+                    Breakdown for {result.driverName} - POS {result.pos}
                 </p>
             </div>
 

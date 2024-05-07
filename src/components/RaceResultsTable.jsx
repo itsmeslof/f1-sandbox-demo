@@ -145,7 +145,7 @@ function ResultBreakdown({ result, onBack }) {
                     </svg>
                 </button>
                 <p className="text-xl">
-                    Race Breakdown for {result.driverName} - POS {result.pos} {result.dnf ? "- DNF" : ""}
+                    Breakdown for {result.driverName} - POS {result.pos} {result.dnf ? "- DNF" : ""}
                 </p>
             </div>
 
