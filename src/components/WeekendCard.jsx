@@ -16,7 +16,7 @@ export default function WeekendCard({
     startRace,
     onReset
 }) {
-    return <div className="bg-[#161523] border border-[#CFCFCF] p-5 rounded-lg min-w-[440px] flex flex-col gap-4 self-start">
+    return <div className="bg-[#161523] border border-[#CFCFCF] p-5 rounded-lg min-w-[440px] flex flex-col gap-4 self-start w-full 2xl:w-min">
         <div className="flex justify-between items-center">
             <p className="text-2xl font-bold">Race Weekend</p>
             <button
@@ -28,7 +28,7 @@ export default function WeekendCard({
             </button>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-row 2xl:flex-col gap-2">
             <SessionButton
                 text="Practice"
                 description="Simulate FP1, FP2 and FP3"
@@ -73,7 +73,7 @@ function SessionButton({ text, description, active, disabled, ...rest }) {
     return <button
         className={
             `p-4 rounded-md text-left flex flex-col gap-2
-            transition duration-150 ${disabled ? disabledClasses : appliedClasses}`
+            transition duration-150 w-full ${disabled ? disabledClasses : appliedClasses}`
         }
         disabled={disabled}
         {...rest}

@@ -6,7 +6,7 @@ import QualifyingResultsTable from "./components/QualifyingResultsTable";
 import RaceResultsTable from "./components/RaceResultsTable";
 
 RaceWeekend.propTypes = {
-    session: PropTypes.string,
+    session: PropTypes.oneOf(Object.values(SessionState)),
     startPractice: PropTypes.func,
     startQualifying: PropTypes.func,
     startRace: PropTypes.func,
@@ -27,7 +27,7 @@ export default function RaceWeekend({
     onReset
 }) {
     return (
-        <div className="flex gap-4 w-full grow">
+        <div className="flex flex-col gap-4 w-full 2xl:flex-row grow">
             <WeekendCard
                 session={session}
                 startPractice={startPractice}
@@ -50,7 +50,7 @@ export default function RaceWeekend({
 }
 
 ResultsWrapper.propTypes = {
-    session: PropTypes.string,
+    session: PropTypes.oneOf(Object.values(SessionState)),
     practiceData: PropTypes.object,
     qualifyingData: PropTypes.object,
     raceData: PropTypes.object

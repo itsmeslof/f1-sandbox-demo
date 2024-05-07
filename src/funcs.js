@@ -91,11 +91,15 @@ export function simulateRace() {
             carData.fluctuation
         );
 
+        const driverFastestLapPaceModifierValue = randFloatRange(
+            driverData.paceModMin, driverData.paceModMax
+        );
+
         const driverFastestLap = parseFloat((
             parseFloat(carData.baseTime) +
             parseFloat(sessionLapTimeModifier) +
             parseFloat(carPerformanceFluctuation) +
-            randFloatRange(driverData.paceModMin, driverData.paceModMax)
+            driverFastestLapPaceModifierValue
         ));
 
         if (!fastestLap || driverFastestLap < fastestLap) {
@@ -107,19 +111,26 @@ export function simulateRace() {
         const driverMistakeTimeLoss = randFloatRange(0.000, 25.000);
         let mechanicalIssueTimeLoss = 0.000;
 
+        let totalLapsWithIssue = 0;
+        let timeLossPerLap = 0.000;
         if (randIntRange(1, 100) <= modifiers.mechanicalIssueChance) {
             const startLap = randIntRange(1, 57);
             const endLap = randIntRange(startLap, 57);
 
-            const totalLapsWithIssue = Math.max(1, endLap - startLap);
-            const timeLossPerLap = randFloatRange(modifiers.mechanicalIssueModMin, modifiers.mechanicalIssueModMin);
+            totalLapsWithIssue = Math.max(1, endLap - startLap);
+            timeLossPerLap = randFloatRange(modifiers.mechanicalIssueModMin, modifiers.mechanicalIssueModMin);
 
             mechanicalIssueTimeLoss = parseFloat(timeLossPerLap * totalLapsWithIssue);
         }
 
+        const driverAvgLapPaceModifierValue = randFloatRange(
+            driverData.paceModMin, driverData.paceModMax
+        );
+
         const driverAvgLap = parseFloat((
             driverFastestLap +
-            randFloatRange(driverData.paceModMin, driverData.paceModMax)
+            1.250 +
+            driverAvgLapPaceModifierValue
         ));
 
         const driverTotalRaceTime = parseFloat(
@@ -142,7 +153,24 @@ export function simulateRace() {
             formattedFastestLap: formatTimeString(driverFastestLap),
             formattedTotalRaceTime: formatTimeString(driverTotalRaceTime),
             gapStr: "",
-            dnf: randIntRange(1, 100) <= modifiers.dnfChance
+            dnf: randIntRange(1, 100) <= modifiers.dnfChance,
+            meta: {
+                trackEvolution: sessionLapTimeModifier.toFixed(3),
+                carPerformanceBaseTime: formatTimeString(carData.baseTime),
+                carPerformanceFluctuationValue: carPerformanceFluctuation >= 0.000 ? `+${carPerformanceFluctuation.toFixed(3)}s` : `${carPerformanceFluctuation.toFixed(3)}s`,
+                carPerformanceFluctuationRangeStr: `-${carData.fluctuation.toFixed(3)} - +${carData.fluctuation.toFixed(3)}`,
+                driverPaceModifierRangeStr: `+${driverData.paceModMin.toFixed(3)}s - +${driverData.paceModMax.toFixed(3)}s`,
+                driverAvgLapPaceModifierValue: `+${driverAvgLapPaceModifierValue.toFixed(3)}s`,
+                driverFastestLapPaceModifierValue: `+${driverFastestLapPaceModifierValue.toFixed(3)}s`,
+                driverAvgLap: formatTimeString(driverAvgLap),
+                driverMistakeTimeLossRange: "+0.000s - +25.000s",
+                driverMistakeTimeLoss: `+${driverMistakeTimeLoss.toFixed(3)}s`,
+                mechanicalIssueChance: modifiers.mechanicalIssueChance,
+                mechanicalIssueTimeLossRange: `+${modifiers.mechanicalIssueModMin.toFixed(3)}s - +${modifiers.mechanicalIssueModMax.toFixed(3)}s`,
+                mechanicalIssueLapsAffected: `${totalLapsWithIssue} ${totalLapsWithIssue === 1 ? 'lap' : 'laps'}`,
+                mechanicalIssueTimeLossPerLap: `+${timeLossPerLap.toFixed(3)}s`,
+                totalMechanicalIssueTimeLoss: `+${mechanicalIssueTimeLoss.toFixed(3)}s`,
+            }
         };
 
     });
@@ -200,12 +228,18 @@ function simulateSimpleSession(
             carData.fluctuation
         );
 
+        const driverFastestLapPaceModifierValue = randFloatRange(
+            driverData.paceModMin, driverData.paceModMax
+        );
+
+        const additionalTimeLoss = parseFloat(additionalModifierCallback());
+
         const driverFastestLap = parseFloat((
             parseFloat(carData.baseTime) +
             parseFloat(sessionLapTimeModifier) +
             parseFloat(carPerformanceFluctuation) +
-            randFloatRange(driverData.paceModMin, driverData.paceModMax) +
-            parseFloat(additionalModifierCallback())
+            driverFastestLapPaceModifierValue +
+            additionalTimeLoss
         ).toFixed(3));
 
         if (!fastestLap || driverFastestLap < fastestLap) {
@@ -221,7 +255,16 @@ function simulateSimpleSession(
             fastestLap: driverFastestLap,
             formattedFastestLap: formatTimeString(driverFastestLap),
             gapStr: "",
-            totalLaps: randIntRange(minLaps, maxLaps)
+            totalLaps: randIntRange(minLaps, maxLaps),
+            meta: {
+                trackEvolution: sessionLapTimeModifier.toFixed(3),
+                carPerformanceBaseTime: formatTimeString(carData.baseTime),
+                carPerformanceFluctuationValue: carPerformanceFluctuation >= 0.000 ? `+${carPerformanceFluctuation.toFixed(3)}s` : `${carPerformanceFluctuation.toFixed(3)}s`,
+                carPerformanceFluctuationRangeStr: `-${carData.fluctuation.toFixed(3)} - +${carData.fluctuation.toFixed(3)}`,
+                driverPaceModifierRangeStr: `+${driverData.paceModMin.toFixed(3)}s - +${driverData.paceModMax.toFixed(3)}s`,
+                driverFastestLapPaceModifierValue: `+${driverFastestLapPaceModifierValue.toFixed(3)}s`,
+                additionalTimeLoss: `+${additionalTimeLoss.toFixed(3)}s`
+            }
         };
     });
 
